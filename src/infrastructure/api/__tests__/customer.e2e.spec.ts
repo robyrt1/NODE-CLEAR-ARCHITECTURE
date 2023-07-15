@@ -1,4 +1,4 @@
-import { app, sequelize } from "../express";
+import { expressConfig, sequelize } from "../express";
 import request from "supertest";
 
 describe("E2E test for customer", () => {
@@ -11,7 +11,7 @@ describe("E2E test for customer", () => {
   });
 
   it("should create a customer", async () => {
-    const response = await request(app)
+    const response = await request(expressConfig)
       .post("/customer")
       .send({
         name: "John",
@@ -32,14 +32,14 @@ describe("E2E test for customer", () => {
   });
 
   it("should not create a customer", async () => {
-    const response = await request(app).post("/customer").send({
+    const response = await request(expressConfig).post("/customer").send({
       name: "john",
     });
     expect(response.status).toBe(500);
   });
 
   it("should list all customer", async () => {
-    const response = await request(app)
+    const response = await request(expressConfig)
       .post("/customer")
       .send({
         name: "John",
@@ -51,7 +51,7 @@ describe("E2E test for customer", () => {
         },
       });
     expect(response.status).toBe(200);
-    const response2 = await request(app)
+    const response2 = await request(expressConfig)
       .post("/customer")
       .send({
         name: "Jane",
@@ -64,7 +64,7 @@ describe("E2E test for customer", () => {
       });
     expect(response2.status).toBe(200);
 
-    const listResponse = await request(app).get("/customer").send();
+    const listResponse = await request(expressConfig).get("/customer").send();
 
     expect(listResponse.status).toBe(200);
     expect(listResponse.body.customers.length).toBe(2);
@@ -75,9 +75,9 @@ describe("E2E test for customer", () => {
     expect(customer2.name).toBe("Jane");
     expect(customer2.address.street).toBe("Street 2");
 
-    const listResponseXML = await request(app)
+    const listResponseXML = await request(expressConfig)
     .get("/customer")
-    .set("Accept", "application/xml")
+    .set("Accept", "expressConfiglication/xml")
     .send();
 
     expect(listResponseXML.status).toBe(200);
