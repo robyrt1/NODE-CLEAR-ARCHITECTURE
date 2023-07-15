@@ -1,8 +1,10 @@
-import { Request, Response,Application } from "express";
+import { Request, Response, Application } from "express";
 import CreateCustomerUseCase from "../../../usecase/customer/create/create.customer.usecase";
 import ListCustomerUseCase from "../../../usecase/customer/list/list.customer.usecase";
 import CustomerRepository from "../../customer/repository/sequelize/customer.repository";
 import CustomerPresenter from "../presenters/customer.presenter";
+import { isEmpty } from "lodash";
+import { HTTPCODE } from "../../@shared/constants/httpCode";
 
 export const customerRoute = (app: Application) => {
   app.post("/customer", async (req: Request, res: Response) => {
@@ -28,6 +30,11 @@ export const customerRoute = (app: Application) => {
     const usecase = new ListCustomerUseCase(new CustomerRepository());
     const output = await usecase.execute({});
 
+    if (isEmpty(output.customers))
+      return res
+        .status(HTTPCODE.BAD_REQUEST)
+        .json("Não possui usuarios cadastrados");
+        
     res.format({
       json: async () => res.send(output),
       xml: async () => res.send(CustomerPresenter.listXML(output)),

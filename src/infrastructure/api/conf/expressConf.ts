@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { customerRoute } from "../routes/customer.route";
+import { responsehandlerMiddleware } from "../middlewares/responsehandlerMiddleware";
 // import routes from "../routes/index.js";
 
 
@@ -47,6 +48,7 @@ class ExpressConfig {
     ];
 
     this.setMiddlewares(middleware);
+    this.getApp().use(responsehandlerMiddleware)
     this.setRoutes([customerRoute]);
     this.setErrorLogHandlers();
   }
